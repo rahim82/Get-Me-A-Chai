@@ -13,6 +13,7 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
+        
     },
     image: {
         type: String,
@@ -25,11 +26,10 @@ const userSchema = new Schema({
     },
     razorpay_key_id: {
         type: String,
-        required: true,
+        
     },
     razorpay_key_secret: {
         type: String,
-        required: true,
     },
 }, { timestamps: true });
 

@@ -9,37 +9,47 @@ export const authOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET // Check your .env file (removed typo 'SECRETE')
+      clientSecret: process.env.GITHUB_SECRET, // Check your .env file (removed typo 'SECRETE')
+      authorization: {
+        params: {
+          scope: "read:user user:email",
+        },
+      },
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account.provider === "github") {
-        await connectDB()
+    async signIn({ user, profile }) {
+  try {
+    await connectDB()
 
-        try {
-          // Check if user exists
-          const currentUser = await User.findOne({ email: user.email })
+    if (!user?.email) {
+      console.log("No email from GitHub")
+      return false
+    }
 
-          if (!currentUser) {
-            // Create a new user
-            const newUser = new User({
-              email: user.email,
-              username: user.email.split("@")[0],
-              razorpay_key_id: "",
-              razorpay_key_secret: "",
-            })
-            // CRITICAL FIX: You must save the user to the database
-            await newUser.save()
-          }
-          return true;
-        } catch (error) {
-          console.error("Error saving user to DB:", error);
-          return false;
-        }
-      }
+    let existingUser = await User.findOne({ email: user.email })
+
+    if (!existingUser) {
+      await User.create({
+        email: user.email,
+        username: profile?.login || user.email.split("@")[0],
+        razorpay_key_id: "",
+        razorpay_key_secret: "",
+      })
+    }
+
+    return true
+  } catch (error) {
+    console.error("SIGNIN ERROR:", error)
+
+    // Duplicate key error ko allow kar do
+    if (error.code === 11000) {
       return true
-    },
+    }
+
+    return false
+  }
+},
 
     async session({ session, user, token }) {
       // Ensure DB is connected for the session check as well

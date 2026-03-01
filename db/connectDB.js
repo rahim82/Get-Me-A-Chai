@@ -19,6 +19,7 @@ export async function connectDB() {
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false, // 👈 IMPORTANT
     });
+    
 
   }
 
