@@ -3,7 +3,7 @@ import React from 'react'
 const about = () => {
   return (
     <>
-            <div className="container text-center mx-auto  px-4 py-10 text-slate-400">
+            <div className="container text-center mx-auto  px-4 py-20 text-slate-400">
             <h1 className="text-4xl font-bold text-center mb-8">About Get Me A Chai</h1>
             <div className="max-w-3xl mx-auto text-lg leading-relaxed">
                 <p className="mb-4">
